@@ -3,6 +3,42 @@
 
 /**
  * 
+ * user button init
+ * 
+ */
+void button_init(unsigned int button)
+{
+	SET_BIT(RCC_BASE + RCC_AHB1ENR_OFFSET, GPIO_EN_BIT(GPIO_PORTA));
+
+	//MODER led pin = 00 => Input (reset state)
+	CLEAR_BIT(GPIO_BASE(GPIO_PORTA) + GPIOx_MODER_OFFSET, MODERy_1_BIT(button));
+	CLEAR_BIT(GPIO_BASE(GPIO_PORTA) + GPIOx_MODER_OFFSET, MODERy_0_BIT(button));
+
+	//OT led pin = 0 => Output push-pull
+	CLEAR_BIT(GPIO_BASE(GPIO_PORTA) + GPIOx_OTYPER_OFFSET, OTy_BIT(button));
+
+	//OSPEEDR led pin = 00 => Low speed
+	CLEAR_BIT(GPIO_BASE(GPIO_PORTA) + GPIOx_OSPEEDR_OFFSET, OSPEEDRy_1_BIT(button));
+	CLEAR_BIT(GPIO_BASE(GPIO_PORTA) + GPIOx_OSPEEDR_OFFSET, OSPEEDRy_0_BIT(button));
+
+	//PUPDR led pin = 00 => No pull-up, pull-down
+	CLEAR_BIT(GPIO_BASE(GPIO_PORTA) + GPIOx_PUPDR_OFFSET, PUPDRy_1_BIT(button));
+	CLEAR_BIT(GPIO_BASE(GPIO_PORTA) + GPIOx_PUPDR_OFFSET, PUPDRy_0_BIT(button));
+}
+
+/**
+ * 
+ * return bit read in user button
+ * 
+ */
+int button_pushed(unsigned int button)
+{
+	button_init(button);
+
+	return READ_BIT(GPIO_BASE(GPIO_PORTA) + GPIOx_IDR_OFFSET, IDRy_BIT(button));
+}
+/**
+ * 
  * LED init
  * 
  */
