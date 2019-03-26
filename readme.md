@@ -45,3 +45,34 @@ This is the hw04 sample. Please follow the steps below.
 --------------------
 
 Take your note here if you want. (Optional)
+
+
+### Manual 
++ As stated in the following chapters of Discovery kit with STM32F407VG MCU User Manual
+	+ §6.4 Push buttons
+		```
+		B1 USER: User and Wake-Up buttons are connected to the I/O PA0 of the STM32F407VG.
+		```
++ In RM0090 Reference manual
+	+ §8.4.5 GPIO port input data register (GPIOx_IDR) (x = A..I/J/K)
+		```
+		Address offset: 0x10
+		Bits 15:0 IDRy: Port input data (y = 0..15)
+				These bits are read-only and can be accessed in word mode only.
+		```
+
+### Define macro and function
++ Define offset and bits(in `reg.h`)
+	```c
+	#define GPIOx_IDR_OFFSET 0x10
+	#define IDRy_BIT(y) (y)
+	```
++ Read bit
+	+ Define `READ_BIT`(in `reg.h`)
+		```c
+		#define READ_BIT(addr, bit) (REG(addr) &= UINT32_1 << (bit))
+		```
+	+ Read button(`PA0`)(in `blink.c`)
+		```c
+		READ_BIT(GPIO_BASE(GPIO_PORTA) + GPIOx_IDR_OFFSET, IDRy_BIT(button));
+		```
